@@ -113,84 +113,79 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 <div class="bottom" id="btm" style="display:none"></div>
 <div id="errbox"></div>
 <script>
-"use strict";
-window.onerror=function(msg,url,line,col,err){
-  var box=document.getElementById("errbox");
-  box.style.display="block";
-  box.textContent="JS Error: "+msg+" (rivi "+line+")";
+'use strict';
+window.onerror=function(msg,url,line){
+  var b=document.getElementById('errbox');
+  b.style.display='block';
+  b.textContent='JS Error: '+msg+' (rivi '+line+')';
 };
 
-/* === DEFAULT PROGRAMS === */
-var DEFAULT_PROGRAMS = [{
-id:“kuntopiiri-1”,
-name:“Kuntopiiri”,
+var Q=String.fromCharCode(34);
+var DEFAULT_PROGRAMS=[{
+id:‘kuntopiiri-1’,
+name:‘Kuntopiiri’,
 sections:[
-{name:“Alkuverryttely”,exercises:[
-{name:“Soutulaite / crosstrainer”,detail:“5 min kevyt vauhti”,timed:true,seconds:300},
-{name:“Vartalonkierto kepilla”,detail:“10 / suunta”,timed:false,seconds:0},
-{name:“Jalkaheilurit”,detail:“10 / jalka”,timed:false,seconds:0},
-{name:“Kyykkyvenytys”,detail:“10 toistoa”,timed:false,seconds:0},
-{name:“Olkapaan pyoritys”,detail:“10 eteen + 10 taakse”,timed:false,seconds:0}
+{name:‘Alkuverryttely’,exercises:[
+{name:‘Soutulaite / crosstrainer’,detail:‘5 min kevyt vauhti’,timed:true,seconds:300},
+{name:‘Vartalonkierto kepilla’,detail:‘10 / suunta’,timed:false,seconds:0},
+{name:‘Jalkaheilurit’,detail:‘10 / jalka’,timed:false,seconds:0},
+{name:‘Kyykkyvenytys’,detail:‘10 toistoa’,timed:false,seconds:0},
+{name:‘Olkapaan pyoritys’,detail:‘10 eteen + 10 taakse’,timed:false,seconds:0}
 ]},
-{name:“Kierros 1”,exercises:[
-{name:“Jalkakyykky”,detail:“12 toistoa - tanko tai kasipainot”,timed:false,seconds:0},
-{name:“Penkkipunnerrus”,detail:“10 toistoa”,timed:false,seconds:0},
-{name:“Kulmasoutu”,detail:“12 toistoa - kasipainoilla”,timed:false,seconds:0},
-{name:“Askelkyykky”,detail:“10 / jalka”,timed:false,seconds:0},
-{name:“Pystypunnerrus”,detail:“10 toistoa - kasipainoilla”,timed:false,seconds:0},
-{name:“Vatsarutistus”,detail:“15 toistoa”,timed:false,seconds:0},
-{name:“Lepo”,detail:“60-90 sek”,timed:true,seconds:90}
+{name:‘Kierros 1’,exercises:[
+{name:‘Jalkakyykky’,detail:‘12 toistoa - tanko tai kasipainot’,timed:false,seconds:0},
+{name:‘Penkkipunnerrus’,detail:‘10 toistoa’,timed:false,seconds:0},
+{name:‘Kulmasoutu’,detail:‘12 toistoa - kasipainoilla’,timed:false,seconds:0},
+{name:‘Askelkyykky’,detail:‘10 / jalka’,timed:false,seconds:0},
+{name:‘Pystypunnerrus’,detail:‘10 toistoa - kasipainoilla’,timed:false,seconds:0},
+{name:‘Vatsarutistus’,detail:‘15 toistoa’,timed:false,seconds:0},
+{name:‘Lepo’,detail:‘60-90 sek’,timed:true,seconds:90}
 ]},
-{name:“Kierros 2”,exercises:[
-{name:“Jalkakyykky”,detail:“12 toistoa”,timed:false,seconds:0},
-{name:“Penkkipunnerrus”,detail:“10 toistoa”,timed:false,seconds:0},
-{name:“Kulmasoutu”,detail:“12 toistoa”,timed:false,seconds:0},
-{name:“Askelkyykky”,detail:“10 / jalka”,timed:false,seconds:0},
-{name:“Pystypunnerrus”,detail:“10 toistoa”,timed:false,seconds:0},
-{name:“Vatsarutistus”,detail:“15 toistoa”,timed:false,seconds:0},
-{name:“Lepo”,detail:“60-90 sek”,timed:true,seconds:90}
+{name:‘Kierros 2’,exercises:[
+{name:‘Jalkakyykky’,detail:‘12 toistoa’,timed:false,seconds:0},
+{name:‘Penkkipunnerrus’,detail:‘10 toistoa’,timed:false,seconds:0},
+{name:‘Kulmasoutu’,detail:‘12 toistoa’,timed:false,seconds:0},
+{name:‘Askelkyykky’,detail:‘10 / jalka’,timed:false,seconds:0},
+{name:‘Pystypunnerrus’,detail:‘10 toistoa’,timed:false,seconds:0},
+{name:‘Vatsarutistus’,detail:‘15 toistoa’,timed:false,seconds:0},
+{name:‘Lepo’,detail:‘60-90 sek’,timed:true,seconds:90}
 ]},
-{name:“Kierros 3”,exercises:[
-{name:“Jalkakyykky”,detail:“12 toistoa”,timed:false,seconds:0},
-{name:“Penkkipunnerrus”,detail:“10 toistoa”,timed:false,seconds:0},
-{name:“Kulmasoutu”,detail:“12 toistoa”,timed:false,seconds:0},
-{name:“Askelkyykky”,detail:“10 / jalka”,timed:false,seconds:0},
-{name:“Pystypunnerrus”,detail:“10 toistoa”,timed:false,seconds:0},
-{name:“Vatsarutistus”,detail:“15 toistoa”,timed:false,seconds:0}
+{name:‘Kierros 3’,exercises:[
+{name:‘Jalkakyykky’,detail:‘12 toistoa’,timed:false,seconds:0},
+{name:‘Penkkipunnerrus’,detail:‘10 toistoa’,timed:false,seconds:0},
+{name:‘Kulmasoutu’,detail:‘12 toistoa’,timed:false,seconds:0},
+{name:‘Askelkyykky’,detail:‘10 / jalka’,timed:false,seconds:0},
+{name:‘Pystypunnerrus’,detail:‘10 toistoa’,timed:false,seconds:0},
+{name:‘Vatsarutistus’,detail:‘15 toistoa’,timed:false,seconds:0}
 ]}
 ]
 }];
 
-/* === STORAGE === */
-function getPrograms(){
-try{var d=JSON.parse(localStorage.getItem(“gym_progs”));return(d&&d.length)?d:null;}
-catch(e){return null;}
-}
-function savePrograms(p){localStorage.setItem(“gym_progs”,JSON.stringify(p));}
+function getPrograms(){try{var d=JSON.parse(localStorage.getItem(‘gym_progs’));return(d&&d.length)?d:null;}catch(e){return null;}}
+function savePrograms(p){localStorage.setItem(‘gym_progs’,JSON.stringify(p));}
 function initPrograms(){if(!getPrograms())savePrograms(JSON.parse(JSON.stringify(DEFAULT_PROGRAMS)));}
-function getHistory(){try{return JSON.parse(localStorage.getItem(“gym_hist”)||”[]”);}catch(e){return[];}}
-function saveHistory(e){var h=getHistory();h.unshift(e);if(h.length>200)h.length=200;localStorage.setItem(“gym_hist”,JSON.stringify(h));}
+function getHistory(){try{return JSON.parse(localStorage.getItem(‘gym_hist’)||’[]’);}catch(e){return[];}}
+function saveHistory(e){var h=getHistory();h.unshift(e);if(h.length>200)h.length=200;localStorage.setItem(‘gym_hist’,JSON.stringify(h));}
 initPrograms();
 
-/* === STATE === */
-var view=“home”;
+var view=‘home’;
 var editProg=null;
 var statsProg=null;
-var homeTab=“programs”;
-var W={phase:“idle”,ci:0,exs:[],t0:null,secT:{},exStart:null,cdLeft:0,progId:null,progName:””};
+var homeTab=‘programs’;
+var W={phase:‘idle’,ci:0,exs:[],t0:null,secT:{},exStart:null,cdLeft:0,progId:null,progName:’’};
 var timerTotal=null;
 var timerCd=null;
 
-/* === HELPERS === */
-function pad2(n){return n<10?“0”+n:””+n;}
-function uid(){return “p-”+Date.now()+”-”+Math.random().toString(36).substr(2,5);}
-function fD(ms){var s=Math.floor(ms/1000);var m=Math.floor(s/60);var h=Math.floor(m/60);if(h>0)return h+”:”+pad2(m%60)+”:”+pad2(s%60);return m+”:”+pad2(s%60);}
-function fS(ms){var s=Math.floor(ms/1000);if(s<60)return s+“s”;return Math.floor(s/60)+“m”+pad2(s%60)+“s”;}
-function fC(s){var m=Math.floor(s/60);if(m>0)return m+”:”+pad2(s%60);return “”+s;}
-function fT(d){return pad2(d.getHours())+”:”+pad2(d.getMinutes());}
-function fDt(d){var ds=[“su”,“ma”,“ti”,“ke”,“to”,“pe”,“la”];return ds[d.getDay()]+” “+d.getDate()+”.”+(d.getMonth()+1)+”.”;}
-function fDF(d){return d.getDate()+”.”+(d.getMonth()+1)+”.”+d.getFullYear();}
-function esc(s){if(!s)return “”;return s.replace(/&/g,”&”).replace(/</g,”<”).replace(/>/g,”>”).replace(/”/g,”"”);}
+function pad2(n){return n<10?‘0’+n:’’+n;}
+function uid(){return ‘p-’+Date.now()+’-’+Math.random().toString(36).substr(2,5);}
+function fD(ms){var s=Math.floor(ms/1000);var m=Math.floor(s/60);var h=Math.floor(m/60);if(h>0)return h+’:’+pad2(m%60)+’:’+pad2(s%60);return m+’:’+pad2(s%60);}
+function fS(ms){var s=Math.floor(ms/1000);if(s<60)return s+‘s’;return Math.floor(s/60)+‘m’+pad2(s%60)+‘s’;}
+function fC(s){var m=Math.floor(s/60);if(m>0)return m+’:’+pad2(s%60);return ‘’+s;}
+function fT(d){return pad2(d.getHours())+’:’+pad2(d.getMinutes());}
+function fDt(d){var ds=[‘su’,‘ma’,‘ti’,‘ke’,‘to’,‘pe’,‘la’];return ds[d.getDay()]+’ ‘+d.getDate()+’.’+(d.getMonth()+1)+’.’;}
+function fDF(d){return d.getDate()+’.’+(d.getMonth()+1)+’.’+d.getFullYear();}
+function esc(s){if(!s)return ‘’;return s.replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’).replace(/’/g,’'’);}
+function qa(s){return s.replace(/’/g,’'’);}
 
 function flatExs(prog){
 var l=[];
@@ -205,18 +200,16 @@ return l;
 }
 function countExs(prog){var c=0;for(var i=0;i<prog.sections.length;i++)c+=prog.sections[i].exercises.length;return c;}
 
-/* === NAVIGATION === */
-function goHome(){view=“home”;clearAllTimers();render();}
+function goHome(){view=‘home’;clearAllTimers();render();}
 function goEdit(prog){
 if(prog){editProg=JSON.parse(JSON.stringify(prog));}
-else{editProg={id:uid(),name:“Uusi ohjelma”,sections:[{name:“Osio 1”,exercises:[{name:””,detail:””,timed:false,seconds:0}]}]};}
-view=“edit”;render();
+else{editProg={id:uid(),name:‘Uusi ohjelma’,sections:[{name:‘Osio 1’,exercises:[{name:’’,detail:’’,timed:false,seconds:0}]}]};}
+view=‘edit’;render();
 }
-function goStats(progId){statsProg=progId;view=“stats”;render();}
+function goStats(progId){statsProg=progId;view=‘stats’;render();}
 
-/* === EDIT ACTIONS === */
 function saveProg(){
-if(!editProg.name.trim()){alert(“Anna ohjelmalle nimi”);return;}
+if(!editProg.name.trim()){alert(‘Anna ohjelmalle nimi’);return;}
 var progs=getPrograms()||[];
 var idx=-1;
 for(var i=0;i<progs.length;i++){if(progs[i].id===editProg.id){idx=i;break;}}
@@ -224,25 +217,25 @@ for(var s=0;s<editProg.sections.length;s++){
 editProg.sections[s].exercises=editProg.sections[s].exercises.filter(function(e){return e.name.trim();});
 }
 editProg.sections=editProg.sections.filter(function(s){return s.exercises.length>0;});
-if(editProg.sections.length===0){alert(“Lisaa vahintaan yksi osio ja liike”);return;}
+if(editProg.sections.length===0){alert(‘Lisaa vahintaan yksi osio ja liike’);return;}
 if(idx>=0)progs[idx]=editProg;else progs.push(editProg);
 savePrograms(progs);goHome();
 }
 function dupProg(prog){
 var progs=getPrograms()||[];
 var copy=JSON.parse(JSON.stringify(prog));
-copy.id=uid();copy.name=prog.name+” (kopio)”;
+copy.id=uid();copy.name=prog.name+’ (kopio)’;
 progs.push(copy);savePrograms(progs);render();
 }
 function delProg(id){
-if(!confirm(“Poista ohjelma?”))return;
+if(!confirm(‘Poista ohjelma?’))return;
 var progs=(getPrograms()||[]).filter(function(p){return p.id!==id;});
 savePrograms(progs);render();
 }
-function addSection(){editProg.sections.push({name:“Osio “+(editProg.sections.length+1),exercises:[{name:””,detail:””,timed:false,seconds:0}]});render();}
+function addSection(){editProg.sections.push({name:‘Osio ‘+(editProg.sections.length+1),exercises:[{name:’’,detail:’’,timed:false,seconds:0}]});render();}
 function removeSection(si){if(editProg.sections.length<2)return;editProg.sections.splice(si,1);render();}
 function moveSection(si,dir){var t=editProg.sections[si];editProg.sections[si]=editProg.sections[si+dir];editProg.sections[si+dir]=t;render();}
-function addEx(si){editProg.sections[si].exercises.push({name:””,detail:””,timed:false,seconds:0});render();}
+function addEx(si){editProg.sections[si].exercises.push({name:’’,detail:’’,timed:false,seconds:0});render();}
 function removeEx(si,ei){editProg.sections[si].exercises.splice(ei,1);render();}
 function moveEx(si,ei,dir){var exs=editProg.sections[si].exercises;var t=exs[ei];exs[ei]=exs[ei+dir];exs[ei+dir]=t;render();}
 function setEditField(si,ei,field,val){editProg.sections[si].exercises[ei][field]=val;}
@@ -250,7 +243,6 @@ function setEditTimed(si,ei,val){editProg.sections[si].exercises[ei].timed=val;r
 function setEditSecName(si,val){editProg.sections[si].name=val;}
 function setEditName(val){editProg.name=val;}
 
-/* === WORKOUT === */
 function clearAllTimers(){clearInterval(timerTotal);clearInterval(timerCd);timerTotal=null;timerCd=null;}
 
 function startWorkout(progId){
@@ -259,13 +251,13 @@ var prog=null;
 for(var i=0;i<progs.length;i++){if(progs[i].id===progId){prog=progs[i];break;}}
 if(!prog)return;
 var exs=flatExs(prog);
-W={phase:“active”,ci:0,exs:[],t0:Date.now(),secT:{},exStart:Date.now(),cdLeft:0,progId:prog.id,progName:prog.name};
+W={phase:‘active’,ci:0,exs:[],t0:Date.now(),secT:{},exStart:Date.now(),cdLeft:0,progId:prog.id,progName:prog.name};
 for(var j=0;j<exs.length;j++){W.exs.push({name:exs[j].name,detail:exs[j].detail,timed:exs[j].timed,seconds:exs[j].seconds,sec:exs[j].sec,si:exs[j].si,done:false,dur:0});}
 W.secT[W.exs[0].sec]={start:Date.now()};
 clearAllTimers();
 timerTotal=setInterval(render,1000);
 if(W.exs[0].timed)startCd(W.exs[0].seconds);
-view=“workout”;render();
+view=‘workout’;render();
 }
 
 function startCd(sec){
@@ -291,18 +283,18 @@ if(ns!==cs){W.secT[cs].end=now;W.secT[cs].dur=now-W.secT[cs].start;W.secT[ns]={s
 clearInterval(timerCd);W.cdLeft=0;
 if(W.exs[ni].timed)startCd(W.exs[ni].seconds);
 setTimeout(function(){
-var el=document.getElementById(“ex-”+ni);
+var el=document.getElementById(‘ex-’+ni);
 if(el){
-el.scrollIntoView({behavior:“smooth”,block:“center”});
+el.scrollIntoView({behavior:‘smooth’,block:‘center’});
 setTimeout(function(){
 var r=el.getBoundingClientRect();
-if(r.bottom>window.innerHeight-100){el.scrollIntoView({behavior:“smooth”,block:“start”});}
+if(r.bottom>window.innerHeight-100){el.scrollIntoView({behavior:‘smooth’,block:‘start’});}
 },400);
 }
 },100);
 }else{
 W.secT[cs].end=now;W.secT[cs].dur=now-W.secT[cs].start;
-W.phase=“finished”;clearAllTimers();
+W.phase=‘finished’;clearAllTimers();
 var exDurs=[];
 for(var k=0;k<W.exs.length;k++){exDurs.push({name:W.exs[k].name,sec:W.exs[k].sec,dur:W.exs[k].dur});}
 saveHistory({date:new Date().toISOString(),dur:now-W.t0,progId:W.progId,progName:W.progName,secs:JSON.parse(JSON.stringify(W.secT)),exDurs:exDurs,done:W.exs.filter(function(e){return e.done;}).length,total:W.exs.length});
@@ -311,58 +303,57 @@ if(navigator.vibrate)navigator.vibrate(50);
 render();
 }
 
-function resetWorkout(){W.phase=“idle”;clearAllTimers();goHome();}
+function resetWorkout(){W.phase=‘idle’;clearAllTimers();goHome();}
 
-/* === RENDER === */
 function render(){
-var app=document.getElementById(“app”);
-var btm=document.getElementById(“btm”);
-btm.style.display=“none”;
+var app=document.getElementById(‘app’);
+var btm=document.getElementById(‘btm’);
+btm.style.display=‘none’;
 try{
-if(view===“home”){renderHome(app);}
-else if(view===“edit”){renderEdit(app);}
-else if(view===“stats”){renderStats(app);}
-else if(view===“workout”){renderWorkout(app,btm);}
+if(view===‘home’){renderHome(app);}
+else if(view===‘edit’){renderEdit(app);}
+else if(view===‘stats’){renderStats(app);}
+else if(view===‘workout’){renderWorkout(app,btm);}
 }catch(err){
-app.innerHTML=’<div style="padding:20px;color:#f88">Render error: ‘+esc(err.message)+’</div>’;
+app.innerHTML=’<div style=’+Q+‘padding:20px;color:#f88’+Q+’>Render error: ‘+esc(err.message)+’</div>’;
 }
 }
 
 function renderHome(app){
 var progs=getPrograms()||[];
 var hist=getHistory();
-var h=’<div style="text-align:center;margin:20px 0 16px"><span style="font-size:48px">🏋️</span></div>’;
-h+=’<div style="font-family:Oswald,sans-serif;font-size:28px;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--accent);text-align:center;margin-bottom:20px">Treeni</div>’;
-h+=’<div class="tabs">’;
-h+=’<button class=“tab’+(homeTab===“programs”?” active”:””)+’” onclick=“homeTab='programs';render()”>Ohjelmat</button>’;
-h+=’<button class=“tab’+(homeTab===“history”?” active”:””)+’” onclick=“homeTab='history';render()”>Historia</button>’;
+var h=’<div style=’+Q+‘text-align:center;margin:20px 0 16px’+Q+’><span style=’+Q+‘font-size:48px’+Q+’>🏋️</span></div>’;
+h+=’<div style=’+Q+‘font-family:Oswald,sans-serif;font-size:28px;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(–accent);text-align:center;margin-bottom:20px’+Q+’>Treeni</div>’;
+h+=’<div class=’+Q+‘tabs’+Q+’>’;
+h+=’<button class=’+Q+‘tab’+(homeTab===‘programs’?’ active’:’’)+Q+’ onclick=’+Q+‘homeTab=\'programs\';render()’+Q+’>Ohjelmat</button>’;
+h+=’<button class=’+Q+‘tab’+(homeTab===‘history’?’ active’:’’)+Q+’ onclick=’+Q+‘homeTab=\'history\';render()’+Q+’>Historia</button>’;
 h+=’</div>’;
 
-if(homeTab===“programs”){
+if(homeTab===‘programs’){
 for(var i=0;i<progs.length;i++){
 var p=progs[i];
-h+=’<div class="prog-card" onclick="startWorkout(\''+p.id+'\')">’;
-h+=’<div class="prog-card-actions">’;
-h+=’<button class="prog-card-btn" onclick="event.stopPropagation();goStats(\''+p.id+'\')">📊</button>’;
-h+=’<button class="prog-card-btn" onclick="event.stopPropagation();goEdit(getPrograms().find(function(x){return x.id===\''+p.id+'\'}))">✏️</button>’;
-h+=’<button class="prog-card-btn" onclick="event.stopPropagation();dupProg(getPrograms().find(function(x){return x.id===\''+p.id+'\'}))">📋</button>’;
-if(progs.length>1){h+=’<button class="prog-card-btn del" onclick="event.stopPropagation();delProg(\''+p.id+'\')">🗑</button>’;}
+h+=’<div class=’+Q+‘prog-card’+Q+’ onclick=’+Q+‘startWorkout(\'’+p.id+’\')’+Q+’>’;
+h+=’<div class=’+Q+‘prog-card-actions’+Q+’>’;
+h+=’<button class=’+Q+‘prog-card-btn’+Q+’ onclick=’+Q+‘event.stopPropagation();goStats(\'’+p.id+’\')’+Q+’>📊</button>’;
+h+=’<button class=’+Q+‘prog-card-btn’+Q+’ onclick=’+Q+‘event.stopPropagation();var ps=getPrograms();for(var i=0;i<ps.length;i++){if(ps[i].id===\'’+p.id+’\'){goEdit(ps[i]);break;}}’+Q+’>✏️</button>’;
+h+=’<button class=’+Q+‘prog-card-btn’+Q+’ onclick=’+Q+‘event.stopPropagation();var ps=getPrograms();for(var i=0;i<ps.length;i++){if(ps[i].id===\'’+p.id+’\'){dupProg(ps[i]);break;}}’+Q+’>📋</button>’;
+if(progs.length>1){h+=’<button class=’+Q+‘prog-card-btn del’+Q+’ onclick=’+Q+‘event.stopPropagation();delProg(\'’+p.id+’\')’+Q+’>🗑</button>’;}
 h+=’</div>’;
-h+=’<div class="prog-card-name">’+esc(p.name)+’</div>’;
-h+=’<div class="prog-card-info">’+p.sections.length+’ osiota · ‘+countExs(p)+’ liiketta</div>’;
+h+=’<div class=’+Q+‘prog-card-name’+Q+’>’+esc(p.name)+’</div>’;
+h+=’<div class=’+Q+‘prog-card-info’+Q+’>’+p.sections.length+’ osiota · ‘+countExs(p)+’ liiketta</div>’;
 h+=’</div>’;
 }
-h+=’<button class="btn full" style="margin-top:8px" onclick="goEdit(null)">+ Uusi ohjelma</button>’;
+h+=’<button class=’+Q+‘btn full’+Q+’ style=’+Q+‘margin-top:8px’+Q+’ onclick=’+Q+‘goEdit(null)’+Q+’>+ Uusi ohjelma</button>’;
 }else{
 if(hist.length>0){
 for(var j=0;j<hist.length;j++){
 var hi=hist[j];var d=new Date(hi.date);
-h+=’<div class="hist-item"><span>’+fDF(d)+’ ‘+fT(d)+’<br><span style="color:var(--muted);font-size:10px">’+esc(hi.progName||”-”)+’</span></span>’;
-h+=’<span style="color:var(--muted)">’+fD(hi.dur)+’ · ‘+hi.done+’/’+hi.total+’</span></div>’;
+h+=’<div class=’+Q+‘hist-item’+Q+’><span>’+fDF(d)+’ ‘+fT(d)+’<br><span style=’+Q+‘color:var(–muted);font-size:10px’+Q+’>’+esc(hi.progName||’-’)+’</span></span>’;
+h+=’<span style=’+Q+‘color:var(–muted)’+Q+’>’+fD(hi.dur)+’ · ‘+hi.done+’/’+hi.total+’</span></div>’;
 }
-h+=’<div style="text-align:center;padding:10px"><button class="btn sm danger" onclick="if(confirm(\'Tyhjenna koko historia?\')){localStorage.removeItem(\'gym_hist\');render();}">Tyhjenna historia</button></div>’;
+h+=’<div style=’+Q+‘text-align:center;padding:10px’+Q+’><button class=’+Q+‘btn sm danger’+Q+’ onclick=’+Q+‘if(confirm(\'Tyhjenna historia?\')){localStorage.removeItem(\'gym_hist\');render();}’+Q+’>Tyhjenna historia</button></div>’;
 }else{
-h+=’<div style="text-align:center;color:var(--muted);padding:40px;font-size:12px">Ei viela treenejae</div>’;
+h+=’<div style=’+Q+‘text-align:center;color:var(–muted);padding:40px;font-size:12px’+Q+’>Ei viela treenejae</div>’;
 }
 }
 app.innerHTML=h;
@@ -370,44 +361,44 @@ app.innerHTML=h;
 
 function renderEdit(app){
 var p=editProg;
-var h=’<div class="hdr"><button class="hdr-back" onclick="goHome()">←</button>’;
-h+=’<div style="flex:1"><div class="hdr-title">Muokkaa</div></div>’;
-h+=’<button class="btn sm green" onclick="saveProg()">Tallenna</button></div>’;
-h+=’<div class="input-group"><label class="input-label">Ohjelman nimi</label>’;
-h+=’<input class="input" value="'+esc(p.name)+'" onchange="setEditName(this.value)"></div>’;
+var h=’<div class=’+Q+‘hdr’+Q+’><button class=’+Q+‘hdr-back’+Q+’ onclick=’+Q+‘goHome()’+Q+’>←</button>’;
+h+=’<div style=’+Q+‘flex:1’+Q+’><div class=’+Q+‘hdr-title’+Q+’>Muokkaa</div></div>’;
+h+=’<button class=’+Q+‘btn sm green’+Q+’ onclick=’+Q+‘saveProg()’+Q+’>Tallenna</button></div>’;
+h+=’<div class=’+Q+‘input-group’+Q+’><label class=’+Q+‘input-label’+Q+’>Ohjelman nimi</label>’;
+h+=’<input class=’+Q+‘input’+Q+’ value=’+Q+esc(p.name)+Q+’ onchange=’+Q+‘setEditName(this.value)’+Q+’></div>’;
 
 for(var si=0;si<p.sections.length;si++){
 var sec=p.sections[si];
-h+=’<div class="edit-sec"><div class="edit-sec-hdr"><div class="edit-sec-name">’;
-h+=’<input value="'+esc(sec.name)+'" onchange="setEditSecName('+si+',this.value)">’;
-h+=’</div><div class="edit-sec-btns">’;
-if(si>0)h+=’<button class="edit-sec-btn" onclick="moveSection('+si+',-1)">↑</button>’;
-if(si<p.sections.length-1)h+=’<button class="edit-sec-btn" onclick="moveSection('+si+',1)">↓</button>’;
-h+=’<button class="edit-sec-btn del" onclick="removeSection('+si+')">✕</button>’;
+h+=’<div class=’+Q+‘edit-sec’+Q+’><div class=’+Q+‘edit-sec-hdr’+Q+’><div class=’+Q+‘edit-sec-name’+Q+’>’;
+h+=’<input value=’+Q+esc(sec.name)+Q+’ onchange=’+Q+‘setEditSecName(’+si+’,this.value)’+Q+’>’;
+h+=’</div><div class=’+Q+‘edit-sec-btns’+Q+’>’;
+if(si>0)h+=’<button class=’+Q+‘edit-sec-btn’+Q+’ onclick=’+Q+‘moveSection(’+si+’,-1)’+Q+’>↑</button>’;
+if(si<p.sections.length-1)h+=’<button class=’+Q+‘edit-sec-btn’+Q+’ onclick=’+Q+‘moveSection(’+si+’,1)’+Q+’>↓</button>’;
+h+=’<button class=’+Q+‘edit-sec-btn del’+Q+’ onclick=’+Q+‘removeSection(’+si+’)’+Q+’>✕</button>’;
 h+=’</div></div>’;
 
 ```
 for(var ei=0;ei<sec.exercises.length;ei++){
   var ex=sec.exercises[ei];
-  h+='<div class="edit-ex"><div class="edit-ex-grip">';
-  if(ei>0)h+='<span onclick="moveEx('+si+','+ei+',-1)" style="cursor:pointer">&#8593;</span> ';
-  if(ei<sec.exercises.length-1)h+='<span onclick="moveEx('+si+','+ei+',1)" style="cursor:pointer">&#8595;</span>';
-  h+='</div><div class="edit-ex-fields">';
-  h+='<div class="edit-ex-row"><input class="input input-sm" placeholder="Liikkeen nimi" value="'+esc(ex.name)+'" onchange="setEditField('+si+','+ei+',\'name\',this.value)">';
-  h+='<button class="edit-ex-del" onclick="removeEx('+si+','+ei+')">&#10005;</button></div>';
-  h+='<div class="edit-ex-row"><input class="input input-sm" placeholder="Lisatiedot" value="'+esc(ex.detail)+'" onchange="setEditField('+si+','+ei+',\'detail\',this.value)"></div>';
-  h+='<label class="checkbox-row"><input type="checkbox" '+(ex.timed?"checked":"")+' onchange="setEditTimed('+si+','+ei+',this.checked)"> Ajastettu</label>';
+  h+='<div class='+Q+'edit-ex'+Q+'><div class='+Q+'edit-ex-grip'+Q+'>';
+  if(ei>0)h+='<span onclick='+Q+'moveEx('+si+','+ei+',-1)'+Q+' style='+Q+'cursor:pointer'+Q+'>&#8593;</span> ';
+  if(ei<sec.exercises.length-1)h+='<span onclick='+Q+'moveEx('+si+','+ei+',1)'+Q+' style='+Q+'cursor:pointer'+Q+'>&#8595;</span>';
+  h+='</div><div class='+Q+'edit-ex-fields'+Q+'>';
+  h+='<div class='+Q+'edit-ex-row'+Q+'><input class='+Q+'input input-sm'+Q+' placeholder='+Q+'Liikkeen nimi'+Q+' value='+Q+esc(ex.name)+Q+' onchange='+Q+'setEditField('+si+','+ei+',\\\'name\\\',this.value)'+Q+'>';
+  h+='<button class='+Q+'edit-ex-del'+Q+' onclick='+Q+'removeEx('+si+','+ei+')'+Q+'>&#10005;</button></div>';
+  h+='<div class='+Q+'edit-ex-row'+Q+'><input class='+Q+'input input-sm'+Q+' placeholder='+Q+'Lisatiedot'+Q+' value='+Q+esc(ex.detail)+Q+' onchange='+Q+'setEditField('+si+','+ei+',\\\'detail\\\',this.value)'+Q+'></div>';
+  h+='<label class='+Q+'checkbox-row'+Q+'><input type='+Q+'checkbox'+Q+' '+(ex.timed?'checked':'')+' onchange='+Q+'setEditTimed('+si+','+ei+',this.checked)'+Q+'> Ajastettu</label>';
   if(ex.timed){
-    h+='<div class="edit-ex-row" style="margin-top:2px"><input class="input input-sm narrow" type="number" inputmode="numeric" value="'+(ex.seconds||"")+'" oninput="setEditField('+si+','+ei+',\'seconds\',+this.value)" placeholder="0" min="0"> <span style="font-size:11px;color:var(--muted)">sek</span></div>';
+    h+='<div class='+Q+'edit-ex-row'+Q+' style='+Q+'margin-top:2px'+Q+'><input class='+Q+'input input-sm narrow'+Q+' type='+Q+'number'+Q+' inputmode='+Q+'numeric'+Q+' value='+Q+(ex.seconds||'')+Q+' oninput='+Q+'setEditField('+si+','+ei+',\\\'seconds\\\',+this.value)'+Q+' placeholder='+Q+'0'+Q+' min='+Q+'0'+Q+'> <span style='+Q+'font-size:11px;color:var(--muted)'+Q+'>sek</span></div>';
   }
   h+='</div></div>';
 }
-h+='<div class="edit-add-ex"><button onclick="addEx('+si+')">+ Lisaa liike</button></div></div>';
+h+='<div class='+Q+'edit-add-ex'+Q+'><button onclick='+Q+'addEx('+si+')'+Q+'>+ Lisaa liike</button></div></div>';
 ```
 
 }
-h+=’<button class="btn full" onclick="addSection()">+ Lisaa osio</button>’;
-h+=’<div style="height:20px"></div>’;
+h+=’<button class=’+Q+‘btn full’+Q+’ onclick=’+Q+‘addSection()’+Q+’>+ Lisaa osio</button>’;
+h+=’<div style=’+Q+‘height:20px’+Q+’></div>’;
 app.innerHTML=h;
 }
 
@@ -417,13 +408,13 @@ var hist=allHist.filter(function(h){return h.progId===statsProg;});
 var progs=getPrograms()||[];
 var prog=null;
 for(var i=0;i<progs.length;i++){if(progs[i].id===statsProg){prog=progs[i];break;}}
-var name=prog?prog.name:(hist.length>0?hist[0].progName:”-”);
+var name=prog?prog.name:(hist.length>0?hist[0].progName:’-’);
 
-var h=’<div class="hdr"><button class="hdr-back" onclick="goHome()">←</button>’;
-h+=’<div><div class="hdr-title">’+esc(name)+’</div><div class="hdr-sub">Tilastot</div></div></div>’;
+var h=’<div class=’+Q+‘hdr’+Q+’><button class=’+Q+‘hdr-back’+Q+’ onclick=’+Q+‘goHome()’+Q+’>←</button>’;
+h+=’<div><div class=’+Q+‘hdr-title’+Q+’>’+esc(name)+’</div><div class=’+Q+‘hdr-sub’+Q+’>Tilastot</div></div></div>’;
 
 if(hist.length===0){
-h+=’<div style="text-align:center;color:var(--muted);padding:40px;font-size:12px">Ei viela treenejae tallae ohjelmalla</div>’;
+h+=’<div style=’+Q+‘text-align:center;color:var(–muted);padding:40px;font-size:12px’+Q+’>Ei viela treenejae tallae ohjelmalla</div>’;
 app.innerHTML=h;return;
 }
 
@@ -431,18 +422,17 @@ var sumDur=0;var minDur=Infinity;
 for(var j=0;j<hist.length;j++){sumDur+=hist[j].dur;if(hist[j].dur<minDur)minDur=hist[j].dur;}
 var avgDur=sumDur/hist.length;
 
-h+=’<div class="stat-row">’;
-h+=’<div class="stat-card"><div class="stat-val">’+hist.length+’</div><div class="stat-label">Treenejae</div></div>’;
-h+=’<div class="stat-card"><div class="stat-val">’+fD(avgDur)+’</div><div class="stat-label">Keskiaika</div></div>’;
-h+=’<div class="stat-card"><div class="stat-val" style="color:var(--green)">’+fD(minDur)+’</div><div class="stat-label">Paras aika</div></div>’;
+h+=’<div class=’+Q+‘stat-row’+Q+’>’;
+h+=’<div class=’+Q+‘stat-card’+Q+’><div class=’+Q+‘stat-val’+Q+’>’+hist.length+’</div><div class=’+Q+‘stat-label’+Q+’>Treenejae</div></div>’;
+h+=’<div class=’+Q+‘stat-card’+Q+’><div class=’+Q+‘stat-val’+Q+’>’+fD(avgDur)+’</div><div class=’+Q+‘stat-label’+Q+’>Keskiaika</div></div>’;
+h+=’<div class=’+Q+‘stat-card’+Q+’><div class=’+Q+‘stat-val’+Q+’ style=’+Q+‘color:var(–green)’+Q+’>’+fD(minDur)+’</div><div class=’+Q+‘stat-label’+Q+’>Paras aika</div></div>’;
 h+=’</div>’;
 
 var last=hist[0];var ld=new Date(last.date);
-h+=’<div class="card"><div class="label">Viimeisin treeni</div>’;
-h+=’<div style="font-size:12px;color:var(--muted)">’+fDF(ld)+’ klo ‘+fT(ld)+’</div>’;
-h+=’<div style="font-family:Oswald,sans-serif;font-size:22px;color:var(--accent);margin-top:4px">’+fD(last.dur)+’</div></div>’;
+h+=’<div class=’+Q+‘card’+Q+’><div class=’+Q+‘label’+Q+’>Viimeisin treeni</div>’;
+h+=’<div style=’+Q+‘font-size:12px;color:var(–muted)’+Q+’>’+fDF(ld)+’ klo ‘+fT(ld)+’</div>’;
+h+=’<div style=’+Q+‘font-family:Oswald,sans-serif;font-size:22px;color:var(–accent);margin-top:4px’+Q+’>’+fD(last.dur)+’</div></div>’;
 
-// Section averages
 var secAvgs={};var secOrder=[];
 var limit=Math.min(hist.length,10);
 for(var k=0;k<limit;k++){
@@ -460,30 +450,29 @@ var maxSecAvg=1;
 for(var s in secAvgs){var a=secAvgs[s].total/secAvgs[s].count;if(a>maxSecAvg)maxSecAvg=a;}
 
 if(secOrder.length>0){
-h+=’<div class="card"><div class="label">Osioiden keskiajat (viim. 10)</div>’;
+h+=’<div class=’+Q+‘card’+Q+’><div class=’+Q+‘label’+Q+’>Osioiden keskiajat (viim. 10)</div>’;
 for(var n=0;n<secOrder.length;n++){
 var sn2=secOrder[n];var sa=secAvgs[sn2];var avg2=sa.total/sa.count;
 var pct=Math.round(avg2/maxSecAvg*100);
-h+=’<div class="stat-bar-row"><span class="stat-bar-label">’+esc(sn2)+’</span>’;
-h+=’<div class="stat-bar-track"><div class="stat-bar-fill" style="width:'+pct+'%"></div></div>’;
-h+=’<span class="stat-bar-val">’+fS(avg2)+’</span></div>’;
+h+=’<div class=’+Q+‘stat-bar-row’+Q+’><span class=’+Q+‘stat-bar-label’+Q+’>’+esc(sn2)+’</span>’;
+h+=’<div class=’+Q+‘stat-bar-track’+Q+’><div class=’+Q+‘stat-bar-fill’+Q+’ style=’+Q+‘width:’+pct+’%’+Q+’></div></div>’;
+h+=’<span class=’+Q+‘stat-bar-val’+Q+’>’+fS(avg2)+’</span></div>’;
 }
 h+=’</div>’;
 }
 
-// Time trend
 var recent=hist.slice(0,10).reverse();
 if(recent.length>1){
 var maxRD=1;
 for(var r=0;r<recent.length;r++){if(recent[r].dur>maxRD)maxRD=recent[r].dur;}
-h+=’<div class="card"><div class="label">Kokonaisajan kehitys</div>’;
-h+=’<div style="display:flex;align-items:flex-end;height:80px;gap:3px;padding-top:8px">’;
+h+=’<div class=’+Q+‘card’+Q+’><div class=’+Q+‘label’+Q+’>Kokonaisajan kehitys</div>’;
+h+=’<div style=’+Q+‘display:flex;align-items:flex-end;height:80px;gap:3px;padding-top:8px’+Q+’>’;
 for(var q=0;q<recent.length;q++){
 var rh=Math.max(recent[q].dur/maxRD*100,5);
 var isL=q===recent.length-1;
-h+=’<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">’;
-h+=’<div style="font-size:8px;color:var(--muted);margin-bottom:2px">’+fD(recent[q].dur)+’</div>’;
-h+=’<div style=“width:100%;height:’+rh+’%;background:’+(isL?“var(–accent)”:“var(–border2)”)+’;border-radius:2px 2px 0 0”></div></div>’;
+h+=’<div style=’+Q+‘flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%’+Q+’>’;
+h+=’<div style=’+Q+‘font-size:8px;color:var(–muted);margin-bottom:2px’+Q+’>’+fD(recent[q].dur)+’</div>’;
+h+=’<div style=’+Q+‘width:100%;height:’+rh+’%;background:’+(isL?‘var(–accent)’:‘var(–border2)’)+’;border-radius:2px 2px 0 0’+Q+’></div></div>’;
 }
 h+=’</div></div>’;
 }
@@ -494,36 +483,35 @@ app.innerHTML=h;
 function renderWorkout(app,btm){
 var now=new Date();
 
-if(W.phase===“finished”){
-btm.style.display=“none”;
+if(W.phase===‘finished’){
+btm.style.display=‘none’;
 var tot=Date.now()-W.t0;
-var h=’<div style="text-align:center;padding-top:40px">’;
-h+=’<div style="font-size:64px">💪</div>’;
-h+=’<div style="font-family:Oswald,sans-serif;font-size:28px;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--accent);margin:16px 0">’+esc(W.progName)+’ valmis!</div>’;
-h+=’<div style="font-size:12px;color:var(--muted)">Kokonaisaika</div>’;
-h+=’<div style="font-family:Oswald,sans-serif;font-size:36px;color:var(--accent);margin:4px 0 16px">’+fD(tot)+’</div>’;
-h+=’<div style="max-width:340px;margin:0 auto">’;
+var h=’<div style=’+Q+‘text-align:center;padding-top:40px’+Q+’>’;
+h+=’<div style=’+Q+‘font-size:64px’+Q+’>💪</div>’;
+h+=’<div style=’+Q+‘font-family:Oswald,sans-serif;font-size:28px;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(–accent);margin:16px 0’+Q+’>’+esc(W.progName)+’ valmis!</div>’;
+h+=’<div style=’+Q+‘font-size:12px;color:var(–muted)’+Q+’>Kokonaisaika</div>’;
+h+=’<div style=’+Q+‘font-family:Oswald,sans-serif;font-size:36px;color:var(–accent);margin:4px 0 16px’+Q+’>’+fD(tot)+’</div>’;
+h+=’<div style=’+Q+‘max-width:340px;margin:0 auto’+Q+’>’;
 var skeys=Object.keys(W.secT);
 for(var i=0;i<skeys.length;i++){
 var sn=skeys[i];var st=W.secT[sn];
-h+=’<div class="summary-row"><span style="color:var(--muted)">’+esc(sn)+’</span><span>’+(st.dur?fD(st.dur):”-”)+’</span></div>’;
+h+=’<div class=’+Q+‘summary-row’+Q+’><span style=’+Q+‘color:var(–muted)’+Q+’>’+esc(sn)+’</span><span>’+(st.dur?fD(st.dur):’-’)+’</span></div>’;
 }
-h+=’</div><button class="btn primary" onclick="resetWorkout()" style="margin-top:24px;padding:14px 40px">TAKAISIN</button></div>’;
+h+=’</div><button class=’+Q+‘btn primary’+Q+’ onclick=’+Q+‘resetWorkout()’+Q+’ style=’+Q+‘margin-top:24px;padding:14px 40px’+Q+’>TAKAISIN</button></div>’;
 app.innerHTML=h;return;
 }
 
-btm.style.display=“flex”;
+btm.style.display=‘flex’;
 var elapsed=Date.now()-W.t0;
 var dc=0;for(var j=0;j<W.exs.length;j++){if(W.exs[j].done)dc++;}
 var tc=W.exs.length;
 var pct=Math.round(dc/tc*100);
 
-var h2=’<div class="hdr"><div><div class="hdr-title">’+esc(W.progName)+’</div><div class="hdr-sub">’+dc+’/’+tc+’ liiketta</div></div>’;
-h2+=’<div style="text-align:right"><div class="wtimer">’+fD(elapsed)+’</div><div class="wtimer-date">’+fDt(now)+’</div></div></div>’;
-h2+=’<div class="prog-bar"><div class="prog-fill" style="width:'+pct+'%"></div></div>’;
-h2+=’<div class="prog-text"><span>’+pct+’%</span><span>’+dc+’/’+tc+’</span></div>’;
+var h2=’<div class=’+Q+‘hdr’+Q+’><div><div class=’+Q+‘hdr-title’+Q+’>’+esc(W.progName)+’</div><div class=’+Q+‘hdr-sub’+Q+’>’+dc+’/’+tc+’ liiketta</div></div>’;
+h2+=’<div style=’+Q+‘text-align:right’+Q+’><div class=’+Q+‘wtimer’+Q+’>’+fD(elapsed)+’</div><div class=’+Q+‘wtimer-date’+Q+’>’+fDt(now)+’</div></div></div>’;
+h2+=’<div class=’+Q+‘prog-bar’+Q+’><div class=’+Q+‘prog-fill’+Q+’ style=’+Q+‘width:’+pct+’%’+Q+’></div></div>’;
+h2+=’<div class=’+Q+‘prog-text’+Q+’><span>’+pct+’%</span><span>’+dc+’/’+tc+’</span></div>’;
 
-// Group by section
 var secGroups=[];var secMap={};
 for(var k=0;k<W.exs.length;k++){
 var ex=W.exs[k];
@@ -539,43 +527,42 @@ if(!sg.exs[m].ex.done)allDone=false;
 if(sg.exs[m].gi===W.ci)isActive=true;
 }
 var st2=W.secT[sg.name];
-var sd=””;
+var sd=’’;
 if(st2&&st2.dur)sd=fS(st2.dur);
 else if(isActive&&st2)sd=fS(Date.now()-st2.start);
 
 ```
-h2+='<div class="sec-hdr'+(isActive?" active":allDone?" done":"")+'"><span>'+esc(sg.name)+'</span><span class="sec-time">'+sd+'</span></div>';
+h2+='<div class='+Q+'sec-hdr'+(isActive?' active':allDone?' done':'')+Q+'><span>'+esc(sg.name)+'</span><span class='+Q+'sec-time'+Q+'>'+sd+'</span></div>';
 
 for(var n=0;n<sg.exs.length;n++){
   var item=sg.exs[n];
   var isC=item.gi===W.ci;
   var isD=item.ex.done;
-  var cls=isC?"current":isD?"done":"upcoming";
-  var timer="";
+  var cls=isC?'current':isD?'done':'upcoming';
+  var timer='';
   if(isC&&item.ex.timed&&W.cdLeft>0){
-    timer='<div class="ex-cd">'+fC(W.cdLeft)+'</div>';
+    timer='<div class='+Q+'ex-cd'+Q+'>'+fC(W.cdLeft)+'</div>';
   }else if(isC){
-    timer='<div class="ex-elapsed">'+fD(Date.now()-W.exStart)+'</div>';
+    timer='<div class='+Q+'ex-elapsed'+Q+'>'+fD(Date.now()-W.exStart)+'</div>';
   }else if(isD&&item.ex.dur){
-    timer='<div class="ex-dur">'+fS(item.ex.dur)+'</div>';
+    timer='<div class='+Q+'ex-dur'+Q+'>'+fS(item.ex.dur)+'</div>';
   }
 
-  h2+='<div class="ex '+cls+'" id="ex-'+item.gi+'"'+(isC?' onclick="complete('+item.gi+')"':'')+'>';
-  h2+='<div class="ex-check">'+(isD?"&#10003;":"")+'</div>';
-  h2+='<div class="ex-info"><div class="ex-name">'+esc(item.ex.name)+'</div><div class="ex-detail">'+esc(item.ex.detail)+'</div></div>';
-  h2+='<div class="ex-right">'+timer+'</div></div>';
+  h2+='<div class='+Q+'ex '+cls+Q+' id='+Q+'ex-'+item.gi+Q+(isC?' onclick='+Q+'complete('+item.gi+')'+Q:'')+'>';
+  h2+='<div class='+Q+'ex-check'+Q+'>'+(isD?'&#10003;':'')+'</div>';
+  h2+='<div class='+Q+'ex-info'+Q+'><div class='+Q+'ex-name'+Q+'>'+esc(item.ex.name)+'</div><div class='+Q+'ex-detail'+Q+'>'+esc(item.ex.detail)+'</div></div>';
+  h2+='<div class='+Q+'ex-right'+Q+'>'+timer+'</div></div>';
 }
 ```
 
 }
-h2+=’<div style="height:180px"></div>’;
+h2+=’<div style=’+Q+‘height:180px’+Q+’></div>’;
 app.innerHTML=h2;
 
-btm.innerHTML=’<button class="btn danger" onclick="if(confirm(\'Keskeyta treeni?\'))resetWorkout()">LOPETA</button>’
-+’<button class="btn primary" onclick="complete('+W.ci+')">’+(W.ci<W.exs.length-1?“VALMIS ✓”:“VIIMEINEN ✓”)+’</button>’;
+btm.innerHTML=’<button class=’+Q+‘btn danger’+Q+’ onclick=’+Q+‘if(confirm(\'Keskeyta treeni?\')){resetWorkout();}’+Q+’>LOPETA</button>’
++’<button class=’+Q+‘btn primary’+Q+’ onclick=’+Q+‘complete(’+W.ci+’)’+Q+’>’+(W.ci<W.exs.length-1?‘VALMIS ✓’:‘VIIMEINEN ✓’)+’</button>’;
 }
 
-/* === INIT === */
 render();
 </script>
 
