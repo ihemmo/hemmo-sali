@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Treeni">
+<meta name="theme-color" content="#0a0a0a">
+<title>Kuntosalitreeni</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>&#x1F3CB;&#xFE0F;</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--card:#141414;--card2:#1a1a1a;--border:#252525;--border2:#333;--text:#e8e8e8;--muted:#666;--accent:#ff3e00;--accent2:#ff6b3d;--green:#00e676;--yellow:#ffd600;--blue:#40c4ff;--done-bg:#0d1a0d;--done-text:#2a5a2a}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text);min-height:100vh;padding:0;overflow-x:hidden}
+#app{max-width:500px;margin:0 auto;padding:12px;padding-top:max(12px,env(safe-area-inset-top));padding-bottom:max(160px,calc(env(safe-area-inset-bottom)+160px));min-height:100vh}
+.hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--accent)}
+.hdr-title{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--accent)}
+.hdr-sub{font-size:10px;color:var(--muted);margin-top:2px}
+.hdr-back{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:4px 8px;font-family:'Oswald',sans-serif}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.label{font-family:'Oswald',sans-serif;font-size:10px;font-weight:600;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;text-transform:uppercase}
+.btn{padding:12px 24px;border-radius:8px;border:2px solid var(--border);background:var(--card);color:var(--text);font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:8px}
+.btn:active{transform:scale(.95)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.green{background:var(--green);border-color:var(--green);color:#000}
+.btn.danger{border-color:#600;color:#f44}
+.btn.sm{padding:8px 14px;font-size:11px}
+.btn.full{width:100%;justify-content:center}
+.input{width:100%;padding:10px 12px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:13px;outline:none}
+.input:focus{border-color:var(--accent)}
+.input-sm{padding:8px 10px;font-size:12px}
+.input-label{font-size:10px;color:var(--muted);margin-bottom:4px;display:block}
+.input-group{margin-bottom:10px}
+.checkbox-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);cursor:pointer;padding:4px 0}
+.checkbox-row input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px}
+.prog-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:8px;cursor:pointer;transition:all .15s;position:relative}
+.prog-card:active{transform:scale(.98);border-color:var(--accent)}
+.prog-card-name{font-family:'Oswald',sans-serif;font-size:18px;font-weight:600;color:var(--text);margin-bottom:4px}
+.prog-card-info{font-size:10px;color:var(--muted)}
+.prog-card-actions{position:absolute;top:12px;right:12px;display:flex;gap:4px}
+.prog-card-btn{background:none;border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:11px;padding:4px 8px;cursor:pointer;font-family:'IBM Plex Mono',monospace}
+.prog-card-btn.del{color:#800;border-color:#400}
+.edit-sec{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.edit-sec-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);background:var(--card2)}
+.edit-sec-name input{font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--accent);background:transparent;border:none;border-bottom:1px solid var(--border);outline:none;width:100%;padding:2px 0}
+.edit-sec-btns{display:flex;gap:4px}
+.edit-sec-btn{background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:2px 6px}
+.edit-sec-btn.del{color:#800}
+.edit-ex{display:flex;align-items:flex-start;gap:8px;padding:10px 14px;border-bottom:1px solid #111}
+.edit-ex:last-child{border-bottom:none}
+.edit-ex-grip{color:var(--muted);font-size:14px;padding-top:8px;cursor:grab;user-select:none}
+.edit-ex-fields{flex:1;display:flex;flex-direction:column;gap:4px}
+.edit-ex-row{display:flex;gap:6px;align-items:center}
+.edit-ex-row input{flex:1}
+.narrow{max-width:60px}
+.edit-ex-del{background:none;border:none;color:#600;font-size:14px;cursor:pointer;padding:8px 4px}
+.edit-add-ex{padding:8px 14px}
+.edit-add-ex button{background:none;border:1px dashed var(--border);border-radius:6px;color:var(--muted);font-size:11px;padding:8px;width:100%;cursor:pointer;font-family:'IBM Plex Mono',monospace}
+.wtimer{font-family:'Oswald',sans-serif;font-size:28px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;text-align:right}
+.wtimer-date{font-size:10px;color:var(--muted)}
+.prog-bar{height:4px;background:var(--card2);border-radius:2px;overflow:hidden;margin-bottom:4px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .4s}
+.prog-text{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:14px}
+.sec-hdr{font-family:'Oswald',sans-serif;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--muted);padding:10px 0 6px;margin-top:6px;border-top:1px solid var(--border);display:flex;justify-content:space-between}
+.sec-hdr.active{color:var(--accent);border-top-color:var(--accent)}
+.sec-hdr.done{color:var(--done-text);border-top-color:#1a2a1a}
+.sec-time{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:400}
+.ex{display:flex;align-items:center;gap:12px;padding:10px 12px;margin:3px 0;border-radius:8px;background:var(--card);border:1px solid var(--border);cursor:pointer;transition:all .2s}
+.ex:active{transform:scale(.98)}
+.ex.current{background:linear-gradient(135deg,#1a0800,#140a00);border:2px solid var(--accent);padding:18px 14px;margin:8px 0;box-shadow:0 0 20px rgba(255,62,0,.15);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 15px rgba(255,62,0,.1)}50%{box-shadow:0 0 25px rgba(255,62,0,.25)}}
+.ex.current .ex-name{font-size:22px;color:#fff}
+.ex.current .ex-detail{font-size:13px;color:var(--accent2)}
+.ex.done{background:var(--done-bg);border-color:#1a2a1a;opacity:.55}
+.ex.done .ex-name{text-decoration:line-through;color:var(--done-text)}
+.ex.done .ex-detail{color:var(--done-text)}
+.ex.upcoming{opacity:.35}
+.ex-check{width:28px;height:28px;min-width:28px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;color:transparent}
+.ex.done .ex-check{border-color:var(--green);background:rgba(0,230,118,.1);color:var(--green)}
+.ex.current .ex-check{border-color:var(--accent);width:34px;height:34px;min-width:34px}
+.ex-info{flex:1;min-width:0}
+.ex-name{font-family:'Oswald',sans-serif;font-size:14px;font-weight:500;letter-spacing:.5px}
+.ex-detail{font-size:10px;color:var(--muted);margin-top:2px}
+.ex-right{text-align:right;min-width:44px}
+.ex-cd{font-family:'Oswald',sans-serif;font-size:20px;font-weight:600;color:var(--yellow)}
+.ex-elapsed{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent);font-variant-numeric:tabular-nums}
+.ex-dur{font-size:9px;color:var(--done-text)}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(transparent,var(--bg) 20%);padding:20px 12px max(12px,env(safe-area-inset-bottom));display:flex;justify-content:center;gap:10px;z-index:20}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px}
+.stat-val{font-family:'Oswald',sans-serif;font-size:24px;font-weight:600;color:var(--accent)}
+.stat-label{font-size:10px;color:var(--muted);margin-top:2px}
+.stat-row{display:flex;gap:8px}
+.stat-row .stat-card{flex:1}
+.stat-bar-row{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:11px}
+.stat-bar-label{width:80px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px}
+.stat-bar-track{flex:1;height:6px;background:var(--card2);border-radius:3px;overflow:hidden}
+.stat-bar-fill{height:100%;border-radius:3px;background:var(--accent)}
+.stat-bar-val{width:50px;text-align:right;color:var(--muted);font-size:10px;font-variant-numeric:tabular-nums}
+.tabs{display:flex;gap:2px;margin-bottom:14px;background:var(--card);border-radius:8px;padding:3px;border:1px solid var(--border)}
+.tab{flex:1;padding:8px;text-align:center;font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);cursor:pointer;border-radius:6px;border:none;background:none}
+.tab.active{background:var(--accent);color:#fff}
+.hist-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--card);border-radius:6px;margin-bottom:4px;font-size:11px;border:1px solid var(--border)}
+.summary-row{display:flex;justify-content:space-between;padding:6px 0;font-size:11px;border-bottom:1px solid var(--border)}
+#errbox{display:none;background:#400;color:#faa;padding:16px;border-radius:8px;margin:20px;font-size:12px;word-break:break-all}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="bottom" id="btm" style="display:none"></div>
+<div id="errbox"></div>
+<script>
+"use strict";
+window.onerror=function(msg,url,line,col,err){
+  var box=document.getElementById("errbox");
+  box.style.display="block";
+  box.textContent="JS Error: "+msg+" (rivi "+line+")";
+};
+
+/* === DEFAULT PROGRAMS === */
+var DEFAULT_PROGRAMS = [{
+id:“kuntopiiri-1”,
+name:“Kuntopiiri”,
+sections:[
+{name:“Alkuverryttely”,exercises:[
+{name:“Soutulaite / crosstrainer”,detail:“5 min kevyt vauhti”,timed:true,seconds:300},
+{name:“Vartalonkierto kepilla”,detail:“10 / suunta”,timed:false,seconds:0},
+{name:“Jalkaheilurit”,detail:“10 / jalka”,timed:false,seconds:0},
+{name:“Kyykkyvenytys”,detail:“10 toistoa”,timed:false,seconds:0},
+{name:“Olkapaan pyoritys”,detail:“10 eteen + 10 taakse”,timed:false,seconds:0}
+]},
+{name:“Kierros 1”,exercises:[
+{name:“Jalkakyykky”,detail:“12 toistoa - tanko tai kasipainot”,timed:false,seconds:0},
+{name:“Penkkipunnerrus”,detail:“10 toistoa”,timed:false,seconds:0},
+{name:“Kulmasoutu”,detail:“12 toistoa - kasipainoilla”,timed:false,seconds:0},
+{name:“Askelkyykky”,detail:“10 / jalka”,timed:false,seconds:0},
+{name:“Pystypunnerrus”,detail:“10 toistoa - kasipainoilla”,timed:false,seconds:0},
+{name:“Vatsarutistus”,detail:“15 toistoa”,timed:false,seconds:0},
+{name:“Lepo”,detail:“60-90 sek”,timed:true,seconds:90}
+]},
+{name:“Kierros 2”,exercises:[
+{name:“Jalkakyykky”,detail:“12 toistoa”,timed:false,seconds:0},
+{name:“Penkkipunnerrus”,detail:“10 toistoa”,timed:false,seconds:0},
+{name:“Kulmasoutu”,detail:“12 toistoa”,timed:false,seconds:0},
+{name:“Askelkyykky”,detail:“10 / jalka”,timed:false,seconds:0},
+{name:“Pystypunnerrus”,detail:“10 toistoa”,timed:false,seconds:0},
+{name:“Vatsarutistus”,detail:“15 toistoa”,timed:false,seconds:0},
+{name:“Lepo”,detail:“60-90 sek”,timed:true,seconds:90}
+]},
+{name:“Kierros 3”,exercises:[
+{name:“Jalkakyykky”,detail:“12 toistoa”,timed:false,seconds:0},
+{name:“Penkkipunnerrus”,detail:“10 toistoa”,timed:false,seconds:0},
+{name:“Kulmasoutu”,detail:“12 toistoa”,timed:false,seconds:0},
+{name:“Askelkyykky”,detail:“10 / jalka”,timed:false,seconds:0},
+{name:“Pystypunnerrus”,detail:“10 toistoa”,timed:false,seconds:0},
+{name:“Vatsarutistus”,detail:“15 toistoa”,timed:false,seconds:0}
+]}
+]
+}];
+
+/* === STORAGE === */
+function getPrograms(){
+try{var d=JSON.parse(localStorage.getItem(“gym_progs”));return(d&&d.length)?d:null;}
+catch(e){return null;}
+}
+function savePrograms(p){localStorage.setItem(“gym_progs”,JSON.stringify(p));}
+function initPrograms(){if(!getPrograms())savePrograms(JSON.parse(JSON.stringify(DEFAULT_PROGRAMS)));}
+function getHistory(){try{return JSON.parse(localStorage.getItem(“gym_hist”)||”[]”);}catch(e){return[];}}
+function saveHistory(e){var h=getHistory();h.unshift(e);if(h.length>200)h.length=200;localStorage.setItem(“gym_hist”,JSON.stringify(h));}
+initPrograms();
+
+/* === STATE === */
+var view=“home”;
+var editProg=null;
+var statsProg=null;
+var homeTab=“programs”;
+var W={phase:“idle”,ci:0,exs:[],t0:null,secT:{},exStart:null,cdLeft:0,progId:null,progName:””};
+var timerTotal=null;
+var timerCd=null;
+
+/* === HELPERS === */
+function pad2(n){return n<10?“0”+n:””+n;}
+function uid(){return “p-”+Date.now()+”-”+Math.random().toString(36).substr(2,5);}
+function fD(ms){var s=Math.floor(ms/1000);var m=Math.floor(s/60);var h=Math.floor(m/60);if(h>0)return h+”:”+pad2(m%60)+”:”+pad2(s%60);return m+”:”+pad2(s%60);}
+function fS(ms){var s=Math.floor(ms/1000);if(s<60)return s+“s”;return Math.floor(s/60)+“m”+pad2(s%60)+“s”;}
+function fC(s){var m=Math.floor(s/60);if(m>0)return m+”:”+pad2(s%60);return “”+s;}
+function fT(d){return pad2(d.getHours())+”:”+pad2(d.getMinutes());}
+function fDt(d){var ds=[“su”,“ma”,“ti”,“ke”,“to”,“pe”,“la”];return ds[d.getDay()]+” “+d.getDate()+”.”+(d.getMonth()+1)+”.”;}
+function fDF(d){return d.getDate()+”.”+(d.getMonth()+1)+”.”+d.getFullYear();}
+function esc(s){if(!s)return “”;return s.replace(/&/g,”&”).replace(/</g,”<”).replace(/>/g,”>”).replace(/”/g,”"”);}
+
+function flatExs(prog){
+var l=[];
+for(var si=0;si<prog.sections.length;si++){
+var sec=prog.sections[si];
+for(var ei=0;ei<sec.exercises.length;ei++){
+var ex=sec.exercises[ei];
+l.push({name:ex.name,detail:ex.detail,timed:ex.timed,seconds:ex.seconds,sec:sec.name,si:si});
+}
+}
+return l;
+}
+function countExs(prog){var c=0;for(var i=0;i<prog.sections.length;i++)c+=prog.sections[i].exercises.length;return c;}
+
+/* === NAVIGATION === */
+function goHome(){view=“home”;clearAllTimers();render();}
+function goEdit(prog){
+if(prog){editProg=JSON.parse(JSON.stringify(prog));}
+else{editProg={id:uid(),name:“Uusi ohjelma”,sections:[{name:“Osio 1”,exercises:[{name:””,detail:””,timed:false,seconds:0}]}]};}
+view=“edit”;render();
+}
+function goStats(progId){statsProg=progId;view=“stats”;render();}
+
+/* === EDIT ACTIONS === */
+function saveProg(){
+if(!editProg.name.trim()){alert(“Anna ohjelmalle nimi”);return;}
+var progs=getPrograms()||[];
+var idx=-1;
+for(var i=0;i<progs.length;i++){if(progs[i].id===editProg.id){idx=i;break;}}
+for(var s=0;s<editProg.sections.length;s++){
+editProg.sections[s].exercises=editProg.sections[s].exercises.filter(function(e){return e.name.trim();});
+}
+editProg.sections=editProg.sections.filter(function(s){return s.exercises.length>0;});
+if(editProg.sections.length===0){alert(“Lisaa vahintaan yksi osio ja liike”);return;}
+if(idx>=0)progs[idx]=editProg;else progs.push(editProg);
+savePrograms(progs);goHome();
+}
+function dupProg(prog){
+var progs=getPrograms()||[];
+var copy=JSON.parse(JSON.stringify(prog));
+copy.id=uid();copy.name=prog.name+” (kopio)”;
+progs.push(copy);savePrograms(progs);render();
+}
+function delProg(id){
+if(!confirm(“Poista ohjelma?”))return;
+var progs=(getPrograms()||[]).filter(function(p){return p.id!==id;});
+savePrograms(progs);render();
+}
+function addSection(){editProg.sections.push({name:“Osio “+(editProg.sections.length+1),exercises:[{name:””,detail:””,timed:false,seconds:0}]});render();}
+function removeSection(si){if(editProg.sections.length<2)return;editProg.sections.splice(si,1);render();}
+function moveSection(si,dir){var t=editProg.sections[si];editProg.sections[si]=editProg.sections[si+dir];editProg.sections[si+dir]=t;render();}
+function addEx(si){editProg.sections[si].exercises.push({name:””,detail:””,timed:false,seconds:0});render();}
+function removeEx(si,ei){editProg.sections[si].exercises.splice(ei,1);render();}
+function moveEx(si,ei,dir){var exs=editProg.sections[si].exercises;var t=exs[ei];exs[ei]=exs[ei+dir];exs[ei+dir]=t;render();}
+function setEditField(si,ei,field,val){editProg.sections[si].exercises[ei][field]=val;}
+function setEditTimed(si,ei,val){editProg.sections[si].exercises[ei].timed=val;render();}
+function setEditSecName(si,val){editProg.sections[si].name=val;}
+function setEditName(val){editProg.name=val;}
+
+/* === WORKOUT === */
+function clearAllTimers(){clearInterval(timerTotal);clearInterval(timerCd);timerTotal=null;timerCd=null;}
+
+function startWorkout(progId){
+var progs=getPrograms()||[];
+var prog=null;
+for(var i=0;i<progs.length;i++){if(progs[i].id===progId){prog=progs[i];break;}}
+if(!prog)return;
+var exs=flatExs(prog);
+W={phase:“active”,ci:0,exs:[],t0:Date.now(),secT:{},exStart:Date.now(),cdLeft:0,progId:prog.id,progName:prog.name};
+for(var j=0;j<exs.length;j++){W.exs.push({name:exs[j].name,detail:exs[j].detail,timed:exs[j].timed,seconds:exs[j].seconds,sec:exs[j].sec,si:exs[j].si,done:false,dur:0});}
+W.secT[W.exs[0].sec]={start:Date.now()};
+clearAllTimers();
+timerTotal=setInterval(render,1000);
+if(W.exs[0].timed)startCd(W.exs[0].seconds);
+view=“workout”;render();
+}
+
+function startCd(sec){
+W.cdLeft=sec;clearInterval(timerCd);
+timerCd=setInterval(function(){
+W.cdLeft–;
+if(W.cdLeft<=0){clearInterval(timerCd);W.cdLeft=0;if(navigator.vibrate)navigator.vibrate([200,100,200]);}
+render();
+},1000);
+}
+
+function complete(i){
+if(i!==W.ci||W.exs[i].done)return;
+var now=Date.now();
+W.exs[i].done=true;
+W.exs[i].dur=now-W.exStart;
+var cs=W.exs[i].sec;
+var ni=i+1;
+if(ni<W.exs.length){
+W.ci=ni;W.exStart=now;
+var ns=W.exs[ni].sec;
+if(ns!==cs){W.secT[cs].end=now;W.secT[cs].dur=now-W.secT[cs].start;W.secT[ns]={start:now};}
+clearInterval(timerCd);W.cdLeft=0;
+if(W.exs[ni].timed)startCd(W.exs[ni].seconds);
+setTimeout(function(){
+var el=document.getElementById(“ex-”+ni);
+if(el){
+el.scrollIntoView({behavior:“smooth”,block:“center”});
+setTimeout(function(){
+var r=el.getBoundingClientRect();
+if(r.bottom>window.innerHeight-100){el.scrollIntoView({behavior:“smooth”,block:“start”});}
+},400);
+}
+},100);
+}else{
+W.secT[cs].end=now;W.secT[cs].dur=now-W.secT[cs].start;
+W.phase=“finished”;clearAllTimers();
+var exDurs=[];
+for(var k=0;k<W.exs.length;k++){exDurs.push({name:W.exs[k].name,sec:W.exs[k].sec,dur:W.exs[k].dur});}
+saveHistory({date:new Date().toISOString(),dur:now-W.t0,progId:W.progId,progName:W.progName,secs:JSON.parse(JSON.stringify(W.secT)),exDurs:exDurs,done:W.exs.filter(function(e){return e.done;}).length,total:W.exs.length});
+}
+if(navigator.vibrate)navigator.vibrate(50);
+render();
+}
+
+function resetWorkout(){W.phase=“idle”;clearAllTimers();goHome();}
+
+/* === RENDER === */
+function render(){
+var app=document.getElementById(“app”);
+var btm=document.getElementById(“btm”);
+btm.style.display=“none”;
+try{
+if(view===“home”){renderHome(app);}
+else if(view===“edit”){renderEdit(app);}
+else if(view===“stats”){renderStats(app);}
+else if(view===“workout”){renderWorkout(app,btm);}
+}catch(err){
+app.innerHTML=’<div style="padding:20px;color:#f88">Render error: ‘+esc(err.message)+’</div>’;
+}
+}
+
+function renderHome(app){
+var progs=getPrograms()||[];
+var hist=getHistory();
+var h=’<div style="text-align:center;margin:20px 0 16px"><span style="font-size:48px">🏋️</span></div>’;
+h+=’<div style="font-family:Oswald,sans-serif;font-size:28px;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--accent);text-align:center;margin-bottom:20px">Treeni</div>’;
+h+=’<div class="tabs">’;
+h+=’<button class=“tab’+(homeTab===“programs”?” active”:””)+’” onclick=“homeTab='programs';render()”>Ohjelmat</button>’;
+h+=’<button class=“tab’+(homeTab===“history”?” active”:””)+’” onclick=“homeTab='history';render()”>Historia</button>’;
+h+=’</div>’;
+
+if(homeTab===“programs”){
+for(var i=0;i<progs.length;i++){
+var p=progs[i];
+h+=’<div class="prog-card" onclick="startWorkout(\''+p.id+'\')">’;
+h+=’<div class="prog-card-actions">’;
+h+=’<button class="prog-card-btn" onclick="event.stopPropagation();goStats(\''+p.id+'\')">📊</button>’;
+h+=’<button class="prog-card-btn" onclick="event.stopPropagation();goEdit(getPrograms().find(function(x){return x.id===\''+p.id+'\'}))">✏️</button>’;
+h+=’<button class="prog-card-btn" onclick="event.stopPropagation();dupProg(getPrograms().find(function(x){return x.id===\''+p.id+'\'}))">📋</button>’;
+if(progs.length>1){h+=’<button class="prog-card-btn del" onclick="event.stopPropagation();delProg(\''+p.id+'\')">🗑</button>’;}
+h+=’</div>’;
+h+=’<div class="prog-card-name">’+esc(p.name)+’</div>’;
+h+=’<div class="prog-card-info">’+p.sections.length+’ osiota · ‘+countExs(p)+’ liiketta</div>’;
+h+=’</div>’;
+}
+h+=’<button class="btn full" style="margin-top:8px" onclick="goEdit(null)">+ Uusi ohjelma</button>’;
+}else{
+if(hist.length>0){
+for(var j=0;j<hist.length;j++){
+var hi=hist[j];var d=new Date(hi.date);
+h+=’<div class="hist-item"><span>’+fDF(d)+’ ‘+fT(d)+’<br><span style="color:var(--muted);font-size:10px">’+esc(hi.progName||”-”)+’</span></span>’;
+h+=’<span style="color:var(--muted)">’+fD(hi.dur)+’ · ‘+hi.done+’/’+hi.total+’</span></div>’;
+}
+h+=’<div style="text-align:center;padding:10px"><button class="btn sm danger" onclick="if(confirm(\'Tyhjenna koko historia?\')){localStorage.removeItem(\'gym_hist\');render();}">Tyhjenna historia</button></div>’;
+}else{
+h+=’<div style="text-align:center;color:var(--muted);padding:40px;font-size:12px">Ei viela treenejae</div>’;
+}
+}
+app.innerHTML=h;
+}
+
+function renderEdit(app){
+var p=editProg;
+var h=’<div class="hdr"><button class="hdr-back" onclick="goHome()">←</button>’;
+h+=’<div style="flex:1"><div class="hdr-title">Muokkaa</div></div>’;
+h+=’<button class="btn sm green" onclick="saveProg()">Tallenna</button></div>’;
+h+=’<div class="input-group"><label class="input-label">Ohjelman nimi</label>’;
+h+=’<input class="input" value="'+esc(p.name)+'" onchange="setEditName(this.value)"></div>’;
+
+for(var si=0;si<p.sections.length;si++){
+var sec=p.sections[si];
+h+=’<div class="edit-sec"><div class="edit-sec-hdr"><div class="edit-sec-name">’;
+h+=’<input value="'+esc(sec.name)+'" onchange="setEditSecName('+si+',this.value)">’;
+h+=’</div><div class="edit-sec-btns">’;
+if(si>0)h+=’<button class="edit-sec-btn" onclick="moveSection('+si+',-1)">↑</button>’;
+if(si<p.sections.length-1)h+=’<button class="edit-sec-btn" onclick="moveSection('+si+',1)">↓</button>’;
+h+=’<button class="edit-sec-btn del" onclick="removeSection('+si+')">✕</button>’;
+h+=’</div></div>’;
+
+```
+for(var ei=0;ei<sec.exercises.length;ei++){
+  var ex=sec.exercises[ei];
+  h+='<div class="edit-ex"><div class="edit-ex-grip">';
+  if(ei>0)h+='<span onclick="moveEx('+si+','+ei+',-1)" style="cursor:pointer">&#8593;</span> ';
+  if(ei<sec.exercises.length-1)h+='<span onclick="moveEx('+si+','+ei+',1)" style="cursor:pointer">&#8595;</span>';
+  h+='</div><div class="edit-ex-fields">';
+  h+='<div class="edit-ex-row"><input class="input input-sm" placeholder="Liikkeen nimi" value="'+esc(ex.name)+'" onchange="setEditField('+si+','+ei+',\'name\',this.value)">';
+  h+='<button class="edit-ex-del" onclick="removeEx('+si+','+ei+')">&#10005;</button></div>';
+  h+='<div class="edit-ex-row"><input class="input input-sm" placeholder="Lisatiedot" value="'+esc(ex.detail)+'" onchange="setEditField('+si+','+ei+',\'detail\',this.value)"></div>';
+  h+='<label class="checkbox-row"><input type="checkbox" '+(ex.timed?"checked":"")+' onchange="setEditTimed('+si+','+ei+',this.checked)"> Ajastettu</label>';
+  if(ex.timed){
+    h+='<div class="edit-ex-row" style="margin-top:2px"><input class="input input-sm narrow" type="number" inputmode="numeric" value="'+(ex.seconds||"")+'" oninput="setEditField('+si+','+ei+',\'seconds\',+this.value)" placeholder="0" min="0"> <span style="font-size:11px;color:var(--muted)">sek</span></div>';
+  }
+  h+='</div></div>';
+}
+h+='<div class="edit-add-ex"><button onclick="addEx('+si+')">+ Lisaa liike</button></div></div>';
+```
+
+}
+h+=’<button class="btn full" onclick="addSection()">+ Lisaa osio</button>’;
+h+=’<div style="height:20px"></div>’;
+app.innerHTML=h;
+}
+
+function renderStats(app){
+var allHist=getHistory();
+var hist=allHist.filter(function(h){return h.progId===statsProg;});
+var progs=getPrograms()||[];
+var prog=null;
+for(var i=0;i<progs.length;i++){if(progs[i].id===statsProg){prog=progs[i];break;}}
+var name=prog?prog.name:(hist.length>0?hist[0].progName:”-”);
+
+var h=’<div class="hdr"><button class="hdr-back" onclick="goHome()">←</button>’;
+h+=’<div><div class="hdr-title">’+esc(name)+’</div><div class="hdr-sub">Tilastot</div></div></div>’;
+
+if(hist.length===0){
+h+=’<div style="text-align:center;color:var(--muted);padding:40px;font-size:12px">Ei viela treenejae tallae ohjelmalla</div>’;
+app.innerHTML=h;return;
+}
+
+var sumDur=0;var minDur=Infinity;
+for(var j=0;j<hist.length;j++){sumDur+=hist[j].dur;if(hist[j].dur<minDur)minDur=hist[j].dur;}
+var avgDur=sumDur/hist.length;
+
+h+=’<div class="stat-row">’;
+h+=’<div class="stat-card"><div class="stat-val">’+hist.length+’</div><div class="stat-label">Treenejae</div></div>’;
+h+=’<div class="stat-card"><div class="stat-val">’+fD(avgDur)+’</div><div class="stat-label">Keskiaika</div></div>’;
+h+=’<div class="stat-card"><div class="stat-val" style="color:var(--green)">’+fD(minDur)+’</div><div class="stat-label">Paras aika</div></div>’;
+h+=’</div>’;
+
+var last=hist[0];var ld=new Date(last.date);
+h+=’<div class="card"><div class="label">Viimeisin treeni</div>’;
+h+=’<div style="font-size:12px;color:var(--muted)">’+fDF(ld)+’ klo ‘+fT(ld)+’</div>’;
+h+=’<div style="font-family:Oswald,sans-serif;font-size:22px;color:var(--accent);margin-top:4px">’+fD(last.dur)+’</div></div>’;
+
+// Section averages
+var secAvgs={};var secOrder=[];
+var limit=Math.min(hist.length,10);
+for(var k=0;k<limit;k++){
+var secs=hist[k].secs;
+if(!secs)continue;
+var keys=Object.keys(secs);
+for(var m=0;m<keys.length;m++){
+var sn=keys[m];var t=secs[sn];
+if(!t||!t.dur)continue;
+if(!secAvgs[sn]){secAvgs[sn]={total:0,count:0};secOrder.push(sn);}
+secAvgs[sn].total+=t.dur;secAvgs[sn].count++;
+}
+}
+var maxSecAvg=1;
+for(var s in secAvgs){var a=secAvgs[s].total/secAvgs[s].count;if(a>maxSecAvg)maxSecAvg=a;}
+
+if(secOrder.length>0){
+h+=’<div class="card"><div class="label">Osioiden keskiajat (viim. 10)</div>’;
+for(var n=0;n<secOrder.length;n++){
+var sn2=secOrder[n];var sa=secAvgs[sn2];var avg2=sa.total/sa.count;
+var pct=Math.round(avg2/maxSecAvg*100);
+h+=’<div class="stat-bar-row"><span class="stat-bar-label">’+esc(sn2)+’</span>’;
+h+=’<div class="stat-bar-track"><div class="stat-bar-fill" style="width:'+pct+'%"></div></div>’;
+h+=’<span class="stat-bar-val">’+fS(avg2)+’</span></div>’;
+}
+h+=’</div>’;
+}
+
+// Time trend
+var recent=hist.slice(0,10).reverse();
+if(recent.length>1){
+var maxRD=1;
+for(var r=0;r<recent.length;r++){if(recent[r].dur>maxRD)maxRD=recent[r].dur;}
+h+=’<div class="card"><div class="label">Kokonaisajan kehitys</div>’;
+h+=’<div style="display:flex;align-items:flex-end;height:80px;gap:3px;padding-top:8px">’;
+for(var q=0;q<recent.length;q++){
+var rh=Math.max(recent[q].dur/maxRD*100,5);
+var isL=q===recent.length-1;
+h+=’<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">’;
+h+=’<div style="font-size:8px;color:var(--muted);margin-bottom:2px">’+fD(recent[q].dur)+’</div>’;
+h+=’<div style=“width:100%;height:’+rh+’%;background:’+(isL?“var(–accent)”:“var(–border2)”)+’;border-radius:2px 2px 0 0”></div></div>’;
+}
+h+=’</div></div>’;
+}
+
+app.innerHTML=h;
+}
+
+function renderWorkout(app,btm){
+var now=new Date();
+
+if(W.phase===“finished”){
+btm.style.display=“none”;
+var tot=Date.now()-W.t0;
+var h=’<div style="text-align:center;padding-top:40px">’;
+h+=’<div style="font-size:64px">💪</div>’;
+h+=’<div style="font-family:Oswald,sans-serif;font-size:28px;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--accent);margin:16px 0">’+esc(W.progName)+’ valmis!</div>’;
+h+=’<div style="font-size:12px;color:var(--muted)">Kokonaisaika</div>’;
+h+=’<div style="font-family:Oswald,sans-serif;font-size:36px;color:var(--accent);margin:4px 0 16px">’+fD(tot)+’</div>’;
+h+=’<div style="max-width:340px;margin:0 auto">’;
+var skeys=Object.keys(W.secT);
+for(var i=0;i<skeys.length;i++){
+var sn=skeys[i];var st=W.secT[sn];
+h+=’<div class="summary-row"><span style="color:var(--muted)">’+esc(sn)+’</span><span>’+(st.dur?fD(st.dur):”-”)+’</span></div>’;
+}
+h+=’</div><button class="btn primary" onclick="resetWorkout()" style="margin-top:24px;padding:14px 40px">TAKAISIN</button></div>’;
+app.innerHTML=h;return;
+}
+
+btm.style.display=“flex”;
+var elapsed=Date.now()-W.t0;
+var dc=0;for(var j=0;j<W.exs.length;j++){if(W.exs[j].done)dc++;}
+var tc=W.exs.length;
+var pct=Math.round(dc/tc*100);
+
+var h2=’<div class="hdr"><div><div class="hdr-title">’+esc(W.progName)+’</div><div class="hdr-sub">’+dc+’/’+tc+’ liiketta</div></div>’;
+h2+=’<div style="text-align:right"><div class="wtimer">’+fD(elapsed)+’</div><div class="wtimer-date">’+fDt(now)+’</div></div></div>’;
+h2+=’<div class="prog-bar"><div class="prog-fill" style="width:'+pct+'%"></div></div>’;
+h2+=’<div class="prog-text"><span>’+pct+’%</span><span>’+dc+’/’+tc+’</span></div>’;
+
+// Group by section
+var secGroups=[];var secMap={};
+for(var k=0;k<W.exs.length;k++){
+var ex=W.exs[k];
+if(!secMap[ex.sec]){secMap[ex.sec]={name:ex.sec,exs:[]};secGroups.push(secMap[ex.sec]);}
+secMap[ex.sec].exs.push({ex:ex,gi:k});
+}
+
+for(var g=0;g<secGroups.length;g++){
+var sg=secGroups[g];
+var allDone=true;var isActive=false;
+for(var m=0;m<sg.exs.length;m++){
+if(!sg.exs[m].ex.done)allDone=false;
+if(sg.exs[m].gi===W.ci)isActive=true;
+}
+var st2=W.secT[sg.name];
+var sd=””;
+if(st2&&st2.dur)sd=fS(st2.dur);
+else if(isActive&&st2)sd=fS(Date.now()-st2.start);
+
+```
+h2+='<div class="sec-hdr'+(isActive?" active":allDone?" done":"")+'"><span>'+esc(sg.name)+'</span><span class="sec-time">'+sd+'</span></div>';
+
+for(var n=0;n<sg.exs.length;n++){
+  var item=sg.exs[n];
+  var isC=item.gi===W.ci;
+  var isD=item.ex.done;
+  var cls=isC?"current":isD?"done":"upcoming";
+  var timer="";
+  if(isC&&item.ex.timed&&W.cdLeft>0){
+    timer='<div class="ex-cd">'+fC(W.cdLeft)+'</div>';
+  }else if(isC){
+    timer='<div class="ex-elapsed">'+fD(Date.now()-W.exStart)+'</div>';
+  }else if(isD&&item.ex.dur){
+    timer='<div class="ex-dur">'+fS(item.ex.dur)+'</div>';
+  }
+
+  h2+='<div class="ex '+cls+'" id="ex-'+item.gi+'"'+(isC?' onclick="complete('+item.gi+')"':'')+'>';
+  h2+='<div class="ex-check">'+(isD?"&#10003;":"")+'</div>';
+  h2+='<div class="ex-info"><div class="ex-name">'+esc(item.ex.name)+'</div><div class="ex-detail">'+esc(item.ex.detail)+'</div></div>';
+  h2+='<div class="ex-right">'+timer+'</div></div>';
+}
+```
+
+}
+h2+=’<div style="height:180px"></div>’;
+app.innerHTML=h2;
+
+btm.innerHTML=’<button class="btn danger" onclick="if(confirm(\'Keskeyta treeni?\'))resetWorkout()">LOPETA</button>’
++’<button class="btn primary" onclick="complete('+W.ci+')">’+(W.ci<W.exs.length-1?“VALMIS ✓”:“VIIMEINEN ✓”)+’</button>’;
+}
+
+/* === INIT === */
+render();
+</script>
+
+</body>
+</html>
